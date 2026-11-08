@@ -147,9 +147,19 @@ export const ThreeAnatomyViewer: React.FC<ThreeAnatomyViewerProps> = ({
       return;
     }
 
-    // Scene & Camera
-    const scene = new THREE.Scene();
-    sceneRef.current = scene;
+    const cleanups: (() => void)[] = [];
+    cleanups.push(() => {
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
+      renderer.dispose();
+    });
+
+    let frameId = 0;
+    try {
+      // Scene & Camera
+      const scene = new THREE.Scene();
+      sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
     camera.position.set(0, 0.2, 5.2);
@@ -529,12 +539,18 @@ export const ThreeAnatomyViewer: React.FC<ThreeAnatomyViewerProps> = ({
 
     const dom = renderer.domElement;
     dom.addEventListener('mousedown', handlePointerDown);
+    cleanups.push(() => dom.removeEventListener('mousedown', handlePointerDown));
     window.addEventListener('mousemove', handlePointerMove);
+    cleanups.push(() => window.removeEventListener('mousemove', handlePointerMove));
     window.addEventListener('mouseup', handlePointerUp);
+    cleanups.push(() => window.removeEventListener('mouseup', handlePointerUp));
 
     dom.addEventListener('touchstart', handlePointerDown, { passive: true });
+    cleanups.push(() => dom.removeEventListener('touchstart', handlePointerDown));
     window.addEventListener('touchmove', handlePointerMove, { passive: true });
+    cleanups.push(() => window.removeEventListener('touchmove', handlePointerMove));
     window.addEventListener('touchend', handlePointerUp, { passive: true });
+    cleanups.push(() => window.removeEventListener('touchend', handlePointerUp));
 
     // Window Resize
     const handleResize = () => {
@@ -546,11 +562,11 @@ export const ThreeAnatomyViewer: React.FC<ThreeAnatomyViewerProps> = ({
       renderer.setSize(w, h);
     };
     window.addEventListener('resize', handleResize);
+    cleanups.push(() => window.removeEventListener('resize', handleResize));
 
     // ==========================================
     // ANIMATION LOOP WITH THREE.JS SKILL DAMPING
     // ==========================================
-    let frameId = 0;
     const clock = new THREE.Clock();
 
     const animate = () => {
@@ -588,23 +604,15 @@ export const ThreeAnatomyViewer: React.FC<ThreeAnatomyViewerProps> = ({
       renderer.render(scene, camera);
       frameId = requestAnimationFrame(animate);
     };
-
     frameId = requestAnimationFrame(animate);
+    cleanups.push(() => cancelAnimationFrame(frameId));
+    } catch (err) {
+      console.warn('Three.js scene initialization error, displaying fallback schematic:', err);
+      setWebGlError(true);
+    }
 
     return () => {
-      cancelAnimationFrame(frameId);
-      window.removeEventListener('resize', handleResize);
-      dom.removeEventListener('mousedown', handlePointerDown);
-      window.removeEventListener('mousemove', handlePointerMove);
-      window.removeEventListener('mouseup', handlePointerUp);
-      dom.removeEventListener('touchstart', handlePointerDown);
-      window.removeEventListener('touchmove', handlePointerMove);
-      window.removeEventListener('touchend', handlePointerUp);
-
-      if (container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
-      }
-      renderer.dispose();
+      cleanups.forEach((fn) => fn());
     };
   }, [handleFocusJoint]);
 
