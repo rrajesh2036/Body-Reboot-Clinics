@@ -1,4 +1,5 @@
 import { AnatomyJoint, ClinicService, ReviewItem, GalleryPhoto } from '../types';
+import { CLINIC_IMAGES } from '../assets/clinicImages';
 
 export const CLINIC_INFO = {
   name: 'BODY REBOOT CLINICS',
@@ -289,7 +290,7 @@ export const GALLERY_ITEMS: GalleryPhoto[] = [
     id: 'gal-storefront',
     title: 'Clinic Storefront & Signboard',
     category: 'Clinic Exterior',
-    src: '/src/assets/images/clinic_storefront_kolar_1794160301451.jpg',
+    src: CLINIC_IMAGES.storefront,
     caption: 'Storefront at E-1, Mandakani Colony, J K Hospital Main Road, Opposite to Khadim, Kolar Road, Bhopal.',
     isOfficialStorefront: true,
     mapsUrl: 'https://maps.app.goo.gl/rPBdRLVzrZRqFczn9'
@@ -298,7 +299,7 @@ export const GALLERY_ITEMS: GalleryPhoto[] = [
     id: 'gal-interior',
     title: 'Modern Rehabilitation & Exercise Studio',
     category: 'Interior Studio',
-    src: '/src/assets/images/clinic_interior_rehab_1794160302033.jpg',
+    src: CLINIC_IMAGES.interior,
     caption: 'Specialized exercise rehabilitation suite with posture grid, treatment plinths, and active recovery equipment.',
     mapsUrl: 'https://maps.app.goo.gl/9DcxfECzSsemQQDG8'
   },
@@ -306,7 +307,7 @@ export const GALLERY_ITEMS: GalleryPhoto[] = [
     id: 'gal-sports',
     title: 'Sports Medicine & Biomechanical Assessment',
     category: 'Equipment & Treatment',
-    src: '/src/assets/images/sports_medicine_session_1794160299516.jpg',
+    src: CLINIC_IMAGES.sports,
     caption: 'Kinetic movement analysis, knee alignment screening, and return-to-sport physical conditioning.',
     mapsUrl: 'https://maps.app.goo.gl/y6Y98n2SepS8Yd4H8'
   },
@@ -314,7 +315,7 @@ export const GALLERY_ITEMS: GalleryPhoto[] = [
     id: 'gal-spine',
     title: 'Spine Rehabilitation & Therapeutic Exercise',
     category: 'Equipment & Treatment',
-    src: '/src/assets/images/spine_pain_therapy_1794160302964.jpg',
+    src: CLINIC_IMAGES.spine,
     caption: 'Targeted lumbar mobilization, hip alignment therapy, and therapeutic exercise prescription.',
     mapsUrl: 'https://maps.app.goo.gl/EHmWzFL3KkUR2QQa8'
   }

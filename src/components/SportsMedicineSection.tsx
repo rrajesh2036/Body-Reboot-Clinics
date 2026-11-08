@@ -1,5 +1,6 @@
 import React from 'react';
 import { Activity, Gauge, TrendingUp, ShieldCheck, ArrowRight, Calendar } from 'lucide-react';
+import { CLINIC_IMAGES } from '../assets/clinicImages';
 
 interface SportsMedicineSectionProps {
   onOpenBooking: () => void;
@@ -55,7 +56,7 @@ export const SportsMedicineSection: React.FC<SportsMedicineSectionProps> = ({ on
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-12">
           <div className="lg:col-span-5 rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative group">
             <img
-              src="/src/assets/images/sports_medicine_session_1794160299516.jpg"
+              src={CLINIC_IMAGES.sports}
               alt="Sports Medicine & Biomechanical Assessment Session at Body Reboot Clinics"
               className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition-transform duration-500"
               referrerPolicy="no-referrer"

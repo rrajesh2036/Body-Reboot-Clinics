@@ -22,6 +22,45 @@ import { MobileBottomBar } from './components/MobileBottomBar';
 import { LegalModal } from './components/LegalModals';
 import { AnatomyJoint } from './types';
 
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+}
+
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('App Error Caught:', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-[#071B36] text-white flex flex-col items-center justify-center p-6 text-center">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#145DBA] to-[#00C9D6] flex items-center justify-center font-bold text-lg mb-4">BR</div>
+          <h1 className="text-2xl font-bold font-heading mb-2">BODY REBOOT CLINICS</h1>
+          <p className="text-sm text-slate-300 max-w-md mb-6">A temporary script issue occurred. Click below to reload the clinic portal.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-5 py-2.5 rounded-xl bg-[#258AFF] hover:bg-[#145DBA] text-white font-bold text-xs"
+          >
+            Reload Website
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   const [selectedJoint, setSelectedJoint] = useState<AnatomyJoint | null>(null);
   const [legalModalType, setLegalModalType] = useState<'privacy' | 'terms' | 'disclaimer' | null>(null);
@@ -38,7 +77,8 @@ export default function App() {
   };
 
   return (
-    <div id="top" className="min-h-screen bg-[#071B36] text-slate-100 flex flex-col font-sans selection:bg-[#00C9D6] selection:text-[#071B36]">
+    <ErrorBoundary>
+      <div id="top" className="min-h-screen bg-[#071B36] text-slate-100 flex flex-col font-sans selection:bg-[#00C9D6] selection:text-[#071B36]">
       {/* Sticky Navigation Header */}
       <Header onOpenBooking={handleOpenBooking} />
 
@@ -102,6 +142,7 @@ export default function App() {
         type={legalModalType}
         onClose={() => setLegalModalType(null)}
       />
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 }

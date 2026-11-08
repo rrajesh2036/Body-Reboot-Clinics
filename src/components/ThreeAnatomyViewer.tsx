@@ -43,6 +43,7 @@ export const ThreeAnatomyViewer: React.FC<ThreeAnatomyViewerProps> = ({
   const [viewPreset, setViewPreset] = useState<'full' | 'spine' | 'upper' | 'lower'>('full');
   const [controlsCollapsed, setControlsCollapsed] = useState(false);
   const [isRotating, setIsRotating] = useState(true);
+  const [webGlError, setWebGlError] = useState(false);
 
   // Sync with prop
   useEffect(() => {
@@ -119,25 +120,32 @@ export const ThreeAnatomyViewer: React.FC<ThreeAnatomyViewerProps> = ({
       }
     })();
 
-    // Initialize Renderer
+    // Initialize Renderer with safety guard
     const width = container.clientWidth || 600;
     const height = container.clientHeight || 500;
 
-    const renderer = new THREE.WebGLRenderer({
-      antialias: !isSoftwareGl,
-      alpha: true,
-      powerPreference: 'high-performance',
-    });
-    renderer.setPixelRatio(isSoftwareGl ? 1 : Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(width, height);
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
-    renderer.shadowMap.enabled = !isSoftwareGl;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        antialias: !isSoftwareGl,
+        alpha: true,
+        powerPreference: 'high-performance',
+      });
+      renderer.setPixelRatio(isSoftwareGl ? 1 : Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(width, height);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.15;
+      renderer.shadowMap.enabled = !isSoftwareGl;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    container.appendChild(renderer.domElement);
-    rendererRef.current = renderer;
+      container.appendChild(renderer.domElement);
+      rendererRef.current = renderer;
+    } catch (e) {
+      console.warn('WebGL initialization failed, falling back to 2D schematic:', e);
+      setWebGlError(true);
+      return;
+    }
 
     // Scene & Camera
     const scene = new THREE.Scene();
@@ -602,11 +610,37 @@ export const ThreeAnatomyViewer: React.FC<ThreeAnatomyViewerProps> = ({
 
   return (
     <div className="relative w-full h-full min-h-[460px] md:min-h-[580px] flex flex-col items-center justify-between overflow-hidden select-none">
-      {/* 3D WebGL Canvas Container */}
-      <div
-        ref={mountRef}
-        className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
-      />
+      {/* 3D WebGL Canvas Container or Fallback */}
+      {webGlError ? (
+        <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center p-6 bg-[#071B36]">
+          <div className="text-center max-w-sm mb-4">
+            <span className="text-xs text-[#00C9D6] font-semibold uppercase">Kinetic Chain Diagram</span>
+            <h4 className="text-sm font-bold text-white">Anatomy Load Points</h4>
+            <p className="text-[11px] text-slate-400">Select any anatomical zone to inspect clinical protocols:</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-lg">
+            {ANATOMY_JOINTS.map((joint) => (
+              <button
+                key={joint.id}
+                onClick={() => handleFocusJoint(joint)}
+                className={`p-2.5 rounded-xl border text-left text-xs transition-all ${
+                  activeJoint?.id === joint.id
+                    ? 'bg-[#258AFF] border-[#00C9D6] text-white shadow-lg'
+                    : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
+                }`}
+              >
+                <div className="font-semibold text-white">{joint.name.split('(')[0]}</div>
+                <div className="text-[10px] text-[#00C9D6] capitalize">{joint.category.replace('_', ' ')}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div
+          ref={mountRef}
+          className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
+        />
+      )}
 
       {/* Top Floating Badge (Minimal Title & Guidance) */}
       <div className="relative z-10 w-full px-4 pt-3 flex items-center justify-between pointer-events-none">

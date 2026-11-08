@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShieldCheck, CheckCircle2, UserCheck, ArrowRight, Award, Compass, MapPin } from 'lucide-react';
 import { CLINIC_INFO } from '../data/clinicData';
+import { CLINIC_IMAGES } from '../assets/clinicImages';
 
 interface AboutSectionProps {
   onOpenBooking: () => void;
@@ -33,7 +34,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenBooking }) => 
           <div className="lg:col-span-6 flex flex-col justify-between space-y-4">
             <div className="relative rounded-2xl overflow-hidden border border-white/10 group shadow-xl">
               <img
-                src="/src/assets/images/clinic_storefront_kolar_1794160301451.jpg"
+                src={CLINIC_IMAGES.storefront}
                 alt="BODY REBOOT CLINICS Storefront in Mandakani Colony Kolar Road Bhopal"
                 className="w-full h-72 sm:h-80 object-cover group-hover:scale-102 transition-transform duration-500"
                 referrerPolicy="no-referrer"
@@ -56,7 +57,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenBooking }) => 
             <div className="grid grid-cols-2 gap-4">
               <div className="relative rounded-xl overflow-hidden border border-white/10 group shadow-md">
                 <img
-                  src="/src/assets/images/clinic_interior_rehab_1794160302033.jpg"
+                  src={CLINIC_IMAGES.interior}
                   alt="Rehabilitation interior at Body Reboot Clinics Bhopal"
                   className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
@@ -68,7 +69,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenBooking }) => 
 
               <div className="relative rounded-xl overflow-hidden border border-white/10 group shadow-md">
                 <img
-                  src="/src/assets/images/sports_medicine_session_1794160299516.jpg"
+                  src={CLINIC_IMAGES.sports}
                   alt="Sports medicine biomechanics session"
                   className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
