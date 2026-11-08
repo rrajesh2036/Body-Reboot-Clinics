@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-heading: 'Outfit', sans-serif;
+    --font-sans: 'Plus Jakarta Sans', sans-serif;
+  }
+  
+  html {
+    font-family: var(--font-sans);
+    color-scheme: dark;
+  }
+  
+  h1, h2, h3, h4, .font-heading {
+    font-family: var(--font-heading);
+  }
+}
+
+/* Custom subtle glow & glassmorphism utilities */
+.glow-aqua {
+  box-shadow: 0 0 35px -5px rgba(0, 201, 214, 0.35);
+}
+
+.glow-blue {
+  box-shadow: 0 0 40px -5px rgba(37, 138, 255, 0.3);
+}
+
+.glass-panel {
+  background: rgba(13, 34, 64, 0.72);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(20, 52, 98, 0.85);
+  border-color: rgba(0, 201, 214, 0.35);
+}
